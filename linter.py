@@ -13,10 +13,10 @@
 """This module exports the Rubocop plugin class."""
 
 import os
-from SublimeLinter.lint import RubyLinter
+from SublimeLinter.lint import Linter
 
 
-class Rubocop(RubyLinter):
+class Rubocop(Linter):
     """Provides an interface to rubocop."""
 
     syntax = (
@@ -29,10 +29,7 @@ class Rubocop(RubyLinter):
         'ruby'
     )
     cmd = None
-    executable = 'ruby'
-    version_args = '-S rubocop --version'
-    version_re = r'(?P<version>\d+\.\d+\.\d+)'
-    version_requirement = '>= 0.34.0'
+    executable = '/Users/Kevin/bin/rubocopper'
     regex = (
         r'^.+?:(?P<line>\d+):(?P<col>\d+): '
         r'(:?(?P<warning>[RCW])|(?P<error>[EF])): '
@@ -42,16 +39,7 @@ class Rubocop(RubyLinter):
     def cmd(self):
         """Build command, using STDIN if a file path can be determined."""
 
-        settings = self.get_view_settings()
-
-        command = ['ruby', '-S']
-        if self.executable_path:
-            command = self.executable_path + ['-S']
-
-        if settings.get('use_bundle_exec', False):
-            command.extend(['bundle', 'exec'])
-
-        command.extend(['rubocop', '--format', 'emacs'])
+        command = ['/Users/Kevin/bin/rubocopper']
 
         # Set tempfile_suffix so by default a tempfile is passed onto rubocop:
         self.tempfile_suffix = 'rb'
@@ -80,8 +68,8 @@ class Rubocop(RubyLinter):
             #
             # The 'force-exclusion' overrides rubocop's behavior of ignoring
             # global excludes when the file path is explicitly provided:
-            command += ['--force-exclusion', '--stdin', path]
+            command += [path]
             # Ensure the files contents are passed in via STDIN:
             self.tempfile_suffix = None
-
+        print("Command to execute is %s" % (command))
         return command
